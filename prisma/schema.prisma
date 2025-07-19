@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+
+}
+ // output   = "../generated/prisma"
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+//modelos down
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(MENTEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mentor  Mentor?
+  mentee  Mentee?
+  rewards Reward[]
+}
+
+model Mentor {
+  id        String      @id
+  bio       String?
+  user      User        @relation(fields: [id], references: [id])
+  sessions  Session[]   @relation("MentorSessions")
+  expertise Expertise[]
+}
+
+model Expertise {
+  id       String @id @default(uuid())
+  name     String
+  mentorId String
+  mentor   Mentor @relation(fields: [mentorId], references: [id])
+}
+
+model Mentee {
+  id       String    @id
+  user     User      @relation(fields: [id], references: [id])
+  sessions Session[] @relation("MenteeSessions")
+}
+
+model Session {
+  id     String        @id @default(uuid())
+  date   DateTime
+  topic  String
+  status SessionStatus @default(PENDING)
+
+  mentorId String
+  menteeId String
+
+  mentor Mentor @relation("MentorSessions", fields: [mentorId], references: [id])
+  mentee Mentee @relation("MenteeSessions", fields: [menteeId], references: [id])
+}
+
+model Reward {
+  id     String  @id @default(uuid())
+  userId String
+  points Int     @default(0)
+  badge  String?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  MENTOR
+  MENTEE
+}
+
+enum SessionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+}
