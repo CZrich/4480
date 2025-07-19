@@ -6,6 +6,8 @@ import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 
 import {ConfigModule } from '@nestjs/config';
+import { MenteesModule } from './mentees/mentees.module';
+import { ExpertiseModule } from './expertise/expertise.module';
 
 
 
@@ -15,7 +17,7 @@ import {ConfigModule } from '@nestjs/config';
       ConfigModule.forRoot({
       isGlobal: true, // Esto es crucial para que esté disponible en toda la app
     }),
-    AuthModule, UsersModule, MentorsModule, PrismaModule],
+    AuthModule, UsersModule, MentorsModule, PrismaModule, MenteesModule, ExpertiseModule],
   controllers: [],
   providers: [PrismaService],
 })

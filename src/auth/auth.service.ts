@@ -5,9 +5,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from '../users/users.service';
-
+import { MenteesService} from "../mentees/mentees.service" // Assuming you have a MenteesService for mentee-related operations
 import { UserDetailDto } from './dto/user.detail.dto';
 import { LoginResponseDto } from './dto/login.response.dto';
+import { Role } from 'generated/prisma';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,9 @@ export class AuthService {
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
-        private readonly usersService: UsersService, // Asegúrate de importar UsersService si es necesario
+        private readonly usersService: UsersService,
+        private readonly menteesService: MenteesService, // Assuming you have a MentorsService for mentor-related operations
+    
     ) {}
     
     async register(registerDto: RegisterDto) {
@@ -27,16 +30,24 @@ export class AuthService {
             name: registerDto.name,
             email: registerDto.email,
             password: hashedPassword,
-            role: registerDto.role || 'MENTEE',
+            role:  Role.MENTEE,
         });
-       
-        return new UserDetailDto({
+        
+        if ((user.role ?? 'MENTEE') === 'MENTEE') {
+            await this.menteesService.createMentee(user.id);
+        }
+        
+        const userDto= new UserDetailDto({
             id: user.id,
             name: user.name,
             email: user.email,
             role: user.role, 
         });
-    }
+         // Si el rol es MENTEE, crear también en la tabla mentees
+ 
+
+    return userDto;
+}
     
     async login(loginDto: LoginDto) {
         const user = await this.prisma.user.findUnique({
