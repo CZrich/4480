@@ -62,6 +62,7 @@ model Session {
 
   mentor Mentor @relation("MentorSessions", fields: [mentorId], references: [id])
   mentee Mentee @relation("MenteeSessions", fields: [menteeId], references: [id])
+  hasRated   Boolean  @default(false)
 }
 
 model Reward {

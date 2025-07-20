@@ -8,6 +8,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import {ConfigModule } from '@nestjs/config';
 import { MenteesModule } from './mentees/mentees.module';
 import { ExpertiseModule } from './expertise/expertise.module';
+import { SessionsModule } from './sessions/sessions.module';
+import { RewardsModule } from './rewards/rewards.module';
 
 
 
@@ -17,7 +19,7 @@ import { ExpertiseModule } from './expertise/expertise.module';
       ConfigModule.forRoot({
       isGlobal: true, // Esto es crucial para que esté disponible en toda la app
     }),
-    AuthModule, UsersModule, MentorsModule, PrismaModule, MenteesModule, ExpertiseModule],
+    AuthModule, UsersModule, MentorsModule, PrismaModule, MenteesModule, ExpertiseModule, SessionsModule, RewardsModule],
   controllers: [],
   providers: [PrismaService],
 })
